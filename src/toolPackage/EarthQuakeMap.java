@@ -19,6 +19,7 @@ import de.fhpotsdam.unfolding.utils.MapUtils;
 //Parsing library
 import parsing.ParseFeed;
 
+
 public class EarthQuakeMap extends PApplet{
 
 	private static final long serialVersionUID = 6090104746129831548L;
