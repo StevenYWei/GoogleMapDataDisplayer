@@ -49,13 +49,13 @@ public class EarthQuakeMap extends PApplet{
 		
 	}
 	
+	
 	public void draw() {
 		
 		background(150);
 		map.draw();
 		// Add legend to the map.
 		addLegend();
-
 	}
 	
 	/**
