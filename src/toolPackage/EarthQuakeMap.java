@@ -35,6 +35,7 @@ public class EarthQuakeMap extends PApplet{
 		map = new UnfoldingMap(this, 10, 10, 950, 600, new Google.GoogleMapProvider());
 		// Low zoom level that we can see a lot
 		map.zoomLevel(0);
+		// Zoom, pan and click event
 		MapUtils.createDefaultEventDispatcher(this, map);
 		
 		// Read data from earthquake feed
@@ -45,32 +46,49 @@ public class EarthQuakeMap extends PApplet{
 		
 		// Add markers to the map
 		map.addMarkers(markers);
+		
 	}
 	
 	public void draw() {
+		
 		background(150);
 		map.draw();
 		// Add legend to the map.
 		addLegend();
+
 	}
 	
+	/**
+	 * This function use the location information from point feature to create markers for each location
+	 * @param quakeFeature is a list with data type PointFeature, which contains information of the earthquake 
+	 * location, such as latitude and longitude, magnitude and title etc.
+	 * @return the marker is return as an arraylist
+	 */
 	private ArrayList<Marker> createMarker(List<PointFeature> quakeFeature) {
+		
+		// Arraylist to store markers
 		ArrayList<Marker> markerList = new ArrayList<Marker>();
 		Location loc;
 		SimplePointMarker marker;
+		// The magnitude of the earthquake in float number
 		float quakeMagf;
 		for(PointFeature feature : quakeFeature) {
 			loc = feature.getLocation();
 			if(loc != null) {
+				// Create SimplePointMarker for the location with the properties
 				marker = new SimplePointMarker(loc, feature.getProperties());
 				quakeMagf = Float.parseFloat(marker.getProperty("magnitude").toString());
+				// Classify the earthquake into three categories and set different marker sizes and colors according to category
 				if(quakeMagf > EARTHQUAKE_SEVERE) {
+					// Color red
 					marker.setColor(color(255, 0, 0));
 					marker.setRadius(18);
 				} else if(quakeMagf < EARTHQUAKE_MEDIUM) {
+					// Color blue
 					marker.setColor(color(0, 0, 255));
 					marker.setRadius(8);
 				} else {
+					// Color yellow
 					marker.setColor(color(255, 255, 0));
 					marker.setRadius(12);
 				}
@@ -80,6 +98,9 @@ public class EarthQuakeMap extends PApplet{
 		return markerList;
 	}
 	
+	/**
+	 * This function draws a panel contains the legends of the markers.
+	 */
 	private void addLegend() {
 		// Yellow Panel
 		fill(color(255, 255, 200));
