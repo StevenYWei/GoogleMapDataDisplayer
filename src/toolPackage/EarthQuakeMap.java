@@ -28,6 +28,7 @@ public class EarthQuakeMap extends PApplet{
 	private final static String earthQuakeURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
 	private List<PointFeature> quakeFeature;
 	private List<Marker> markers;
+	
 	public void setup() {
 		// Set the size of the windows
 		size(970, 620, OPENGL);
@@ -49,13 +50,13 @@ public class EarthQuakeMap extends PApplet{
 		
 	}
 	
+	
 	public void draw() {
 		
 		background(150);
 		map.draw();
 		// Add legend to the map.
 		addLegend();
-
 	}
 	
 	/**
