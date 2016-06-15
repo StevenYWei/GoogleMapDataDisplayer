@@ -10,6 +10,8 @@ import java.util.List;
 //Unfolding libraries
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.marker.Marker;
+import de.fhpotsdam.unfolding.data.Feature;
+import de.fhpotsdam.unfolding.data.GeoDataReader;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
@@ -24,10 +26,15 @@ public class EarthQuakeMap extends PApplet{
 	private static final long serialVersionUID = 6090104746129831548L;
 	private final static float EARTHQUAKE_SEVERE = 5;
 	private final static float EARTHQUAKE_MEDIUM = 4;
+	
 	private UnfoldingMap map;
 	private final static String earthQuakeURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
-	private List<PointFeature> quakeFeature;
-	private List<Marker> markers;
+	private List<PointFeature> earthquakeFeature;
+	private List<Marker> earthquakeMarkers;
+	private List<Marker> countryMarkers;
+	private List<Marker> cityMarkers;
+	private String cityDataFile = "city-data.json";
+	private String countryDataFile = "countries.geo.json";
 	
 	public void setup() {
 		// Set the size of the windows
@@ -40,13 +47,23 @@ public class EarthQuakeMap extends PApplet{
 		MapUtils.createDefaultEventDispatcher(this, map);
 		
 		// Read data from earthquake feed
-		quakeFeature = ParseFeed.parseEarthquake(this, earthQuakeURL);
+		earthquakeFeature = ParseFeed.parseEarthquake(this, earthQuakeURL);
 
 		// Create simple marker according to the data in List<PointFeature>
-		markers = createMarker(quakeFeature);
+		earthquakeMarkers = createMarker(earthquakeFeature);
+		
+		// Read country data from RSS feed;
+		List<Feature> countryFeature = GeoDataReader.loadData(this, countryDataFile);
+		countryMarkers = MapUtils.createSimpleMarkers(countryFeature);
+		
+		// Read city data from RSS feed;
+		List<Feature> cityFeature = GeoDataReader.loadData(this, cityDataFile);
+		cityMarkers = MapUtils.createSimpleMarkers(cityFeature);
+		
+		
 		
 		// Add markers to the map
-		map.addMarkers(markers);
+		map.addMarkers(earthquakeMarkers);
 	}
 	
 	public void draw() {
@@ -70,19 +87,19 @@ public class EarthQuakeMap extends PApplet{
 		Location loc;
 		SimplePointMarker marker;
 		// The magnitude of the earthquake in float number
-		float quakeMagf;
+		float earthquakeMagnitude;
 		for(PointFeature feature : quakeFeature) {
 			loc = feature.getLocation();
 			if(loc != null) {
 				// Create SimplePointMarker for the location with the properties
 				marker = new SimplePointMarker(loc, feature.getProperties());
-				quakeMagf = Float.parseFloat(marker.getProperty("magnitude").toString());
+				earthquakeMagnitude = Float.parseFloat(marker.getProperty("magnitude").toString());
 				// Classify the earthquake into three categories and set different marker sizes and colors according to category
-				if(quakeMagf > EARTHQUAKE_SEVERE) {
+				if(earthquakeMagnitude > EARTHQUAKE_SEVERE) {
 					// Color red
 					marker.setColor(color(255, 0, 0));
 					marker.setRadius(18);
-				} else if(quakeMagf < EARTHQUAKE_MEDIUM) {
+				} else if(earthquakeMagnitude < EARTHQUAKE_MEDIUM) {
 					// Color blue
 					marker.setColor(color(0, 0, 255));
 					marker.setRadius(8);
