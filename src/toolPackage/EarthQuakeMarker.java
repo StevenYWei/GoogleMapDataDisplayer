@@ -32,7 +32,7 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 	 */
 	public EarthQuakeMarker(PointFeature feature) {
 		super(feature.getLocation(), feature.getProperties());
-		float magnitude = Float.parseFloat(feature.getStringProperty("magnitude"));
+		float magnitude = Float.parseFloat(feature.getProperty("magnitude").toString());
 		if(magnitude > EARTHQUAKE_SEVERE) {
 			radius = (float) (BASE_RADIUS * 1.7);
 		} else if(magnitude < EARTHQUAKE_MEDIUM) {

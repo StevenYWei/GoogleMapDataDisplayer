@@ -9,9 +9,12 @@ import java.util.List;
 
 //Unfolding libraries
 import de.fhpotsdam.unfolding.UnfoldingMap;
+import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
+import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.GeoDataReader;
+import de.fhpotsdam.unfolding.data.GeoJSONReader;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
@@ -33,6 +36,8 @@ public class EarthQuakeMap extends PApplet{
 	private List<Marker> earthquakeMarkers;
 	private List<Marker> countryMarkers;
 	private List<Marker> cityMarkers;
+	private List<Feature> countryFeature;
+	private List<Feature> cityFeature;
 	private String cityDataFile = "city-data.json";
 	private String countryDataFile = "countries.geo.json";
 	
@@ -48,22 +53,25 @@ public class EarthQuakeMap extends PApplet{
 		
 		// Read data from earthquake feed
 		earthquakeFeature = ParseFeed.parseEarthquake(this, earthQuakeURL);
-
-		// Create simple marker according to the data in List<PointFeature>
-		earthquakeMarkers = createMarker(earthquakeFeature);
 		
 		// Read country data from RSS feed;
-		List<Feature> countryFeature = GeoDataReader.loadData(this, countryDataFile);
+		countryFeature = GeoJSONReader.loadData(this, countryDataFile);
 		countryMarkers = MapUtils.createSimpleMarkers(countryFeature);
 		
 		// Read city data from RSS feed;
-		List<Feature> cityFeature = GeoDataReader.loadData(this, cityDataFile);
-		cityMarkers = MapUtils.createSimpleMarkers(cityFeature);
+		cityFeature = GeoJSONReader.loadData(this, cityDataFile);
+		cityMarkers = new ArrayList<Marker>();
+		for(Feature feature : cityFeature) {
+			cityMarkers.add(new CityMarker((PointFeature) feature));
+		}
 		
-		
+		// Create earthquake markers according to the data in List<PointFeature>
+		earthquakeMarkers = new ArrayList<Marker>();
+		createEarthquakeMarker(earthquakeFeature);
 		
 		// Add markers to the map
 		map.addMarkers(earthquakeMarkers);
+		map.addMarkers(cityMarkers);
 	}
 	
 	public void draw() {
@@ -75,7 +83,23 @@ public class EarthQuakeMap extends PApplet{
 	}
 	
 	/**
-	 * This function use the location information from point feature to create markers for each location
+	 * This function creates the earthquake markers according to the earthquake features and 
+	 * categorize into LandQuake and OceanQuake
+	 * @param quakeFeatures is a list with data type PointFeature, which contains information of the earthquake 
+	 * location, such as latitude and longitude, magnitude and title etc.
+	 * @return
+	 */
+	public void createEarthquakeMarker(List<PointFeature> quakeFeatures) {
+		for(PointFeature feature : quakeFeatures) {
+			if(isLand(feature)) {
+				earthquakeMarkers.add(new LandQuakeMarker(feature));
+			} else {
+				earthquakeMarkers.add(new OceanQuakeMarker(feature));
+			}
+		}
+	}
+	/**
+	 * This function use the location information from point feature to create simple point markers for each location
 	 * @param quakeFeature is a list with data type PointFeature, which contains information of the earthquake 
 	 * location, such as latitude and longitude, magnitude and title etc.
 	 * @return the marker is return as an arraylist
@@ -114,6 +138,37 @@ public class EarthQuakeMap extends PApplet{
 		return markerList;
 	}
 	
+	/**
+	 * This function returns whether the location is inland
+	 * @param feature contains information about the earthquake.
+	 * @return true is it's inland, false if it's not inland.
+	 */
+	public boolean isLand(PointFeature feature) {
+		
+		return isInCountry(feature);
+	}
+	
+
+	public boolean isInCountry(PointFeature feature) {
+		
+		Location loc = feature.getLocation();
+		for(Marker marker : countryMarkers) {
+			if(marker.getClass() == MultiMarker.class) {
+				for(Marker subMultiMarker : ((MultiMarker) marker).getMarkers()) {
+					if(((AbstractShapeMarker) subMultiMarker).isInsideByLocation(loc)) {
+						feature.addProperty("country", marker.getProperty("name"));
+						return true;
+					}
+				}
+			} else {
+				if(((AbstractShapeMarker) marker).isInsideByLocation(loc)) {
+					feature.addProperty("country", marker.getProperty("name"));
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	/**
 	 * This function draws a panel contains the legends of the markers.
 	 */
