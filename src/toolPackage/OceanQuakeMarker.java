@@ -28,6 +28,7 @@ public class OceanQuakeMarker extends EarthQuakeMarker {
 	 */
 	@Override
 	public void drawQuakeMarker(PGraphics pg, float x, float y) {
+
 		pg.rect(x - radius/2, y - radius/2, radius, radius);
 	}
 

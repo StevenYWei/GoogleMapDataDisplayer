@@ -42,6 +42,22 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 		}
 	}
 	
+	public void draw(PGraphics pg, float x, float y) {
+		
+		// Save original style
+		pg.pushStyle();
+		// Determine the color
+		determineColor(pg);
+		// Draw marker by calling corresponding overriding method in the subclass
+		drawQuakeMarker(pg, x, y);
+		// If the earthquake happens within 1 hour, draw a cross on the marker
+		if(getProperty("age").toString() == "Past Hour") {
+			drawCross(pg, x, y);
+		}
+		// Reverse to the original style
+		pg.popStyle();	
+	}
+	
 	/**
 	 * Draw different shapes of marker on the earthquake location
 	 * @param pg is processing graph object
@@ -63,8 +79,8 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 	 * @param feature contains information of the earthquake, depth, magnitude and title etc.
 	 * @param pg is processing graph object
 	 */
-	public void determineColor(PointFeature feature, PGraphics pg) {
-		float depth = Float.parseFloat(feature.getStringProperty("depth"));
+	public void determineColor(PGraphics pg) {
+		float depth = Float.parseFloat(getProperty("depth").toString());
 		if(depth > EARTHQUAKE_DEEP) {
 			pg.fill(255, 0, 0);
 		} else if(depth < EARTHQUAKE_SHALLOW) {

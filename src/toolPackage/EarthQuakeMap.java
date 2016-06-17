@@ -43,9 +43,9 @@ public class EarthQuakeMap extends PApplet{
 	
 	public void setup() {
 		// Set the size of the windows
-		size(970, 620, OPENGL);
+		size(1200, 650, OPENGL);
 		// Initialize the map
-		map = new UnfoldingMap(this, 10, 10, 950, 600, new Google.GoogleMapProvider());
+		map = new UnfoldingMap(this, 200, 10, 950, 620, new Google.GoogleMapProvider());
 		// Low zoom level that we can see a lot
 		map.zoomLevel(0);
 		// Zoom, pan and click event
@@ -91,7 +91,7 @@ public class EarthQuakeMap extends PApplet{
 	 */
 	public void createEarthquakeMarker(List<PointFeature> quakeFeatures) {
 		for(PointFeature feature : quakeFeatures) {
-			if(isLand(feature)) {
+			if(isInCountry(feature)) {
 				earthquakeMarkers.add(new LandQuakeMarker(feature));
 			} else {
 				earthquakeMarkers.add(new OceanQuakeMarker(feature));
@@ -144,11 +144,17 @@ public class EarthQuakeMap extends PApplet{
 	 * @return true is it's inland, false if it's not inland.
 	 */
 	public boolean isLand(PointFeature feature) {
-		
+
 		return isInCountry(feature);
 	}
 	
-
+	/**
+	 * This function takes in the earthquake feature and determines whether the quake happens inland
+	 * or in the ocean, if it's inland, assigns it to corresponding country and add one more count on
+	 * the earthquakeCount feature of the country marker.
+	 * @param feature contains information about the earthquake.
+	 * @return true is it is inland, false in the ocean
+	 */
 	public boolean isInCountry(PointFeature feature) {
 		
 		Location loc = feature.getLocation();
@@ -157,12 +163,22 @@ public class EarthQuakeMap extends PApplet{
 				for(Marker subMultiMarker : ((MultiMarker) marker).getMarkers()) {
 					if(((AbstractShapeMarker) subMultiMarker).isInsideByLocation(loc)) {
 						feature.addProperty("country", marker.getProperty("name"));
+						if(marker.getProperty("earthquakeCount") == null) {
+							marker.setProperty("earthquakeCount", (int) 1);
+						} else {
+							marker.setProperty("earthquakeCount", (int) marker.getProperty("earthquakeCount") + 1);
+						}
 						return true;
 					}
 				}
 			} else {
 				if(((AbstractShapeMarker) marker).isInsideByLocation(loc)) {
 					feature.addProperty("country", marker.getProperty("name"));
+					if(marker.getProperty("earthquakeCount") == null) {
+						marker.setProperty("earthquakeCount", (int) 1);
+					} else {
+						marker.setProperty("earthquakeCount", (int) marker.getProperty("earthquakeCount") + 1);
+					}
 					return true;
 				}
 			}
@@ -175,29 +191,52 @@ public class EarthQuakeMap extends PApplet{
 	private void addLegend() {
 		// Yellow Panel
 		fill(color(255, 255, 200));
-		rect(20, 340, 160,250);
+		rect(20, 10, 160, 300);
 
 		// Panel Title 
 		fill(color(0, 0 ,0));
-		text("Earthquake Key", 45, 380);
+		text("Earthquake Key", 45, 50);
 
 		// 5.0+
 		fill(color(255, 0, 0));
-		ellipse(43, 420, 18, 18);
+		ellipse(43, 90, 18, 18);
 		fill(color(0, 0 ,0));
-		text("5.0+ Magnitude", 60, 425);
+		text("5.0+ Magnitude", 60, 93);
 
 		// 4.0+
 		fill(color(255, 255, 0));
-		ellipse(43, 475, 12, 12);
+		ellipse(43, 126, 12, 12);
 		fill(color(0, 0 ,0));
-		text("4.0+ Magnitude", 60, 480);
+		text("4.0+ Magnitude", 60, 129);
 
 		// < 4.0
 		fill(color(0, 0, 255));
-		ellipse(43, 530, 8, 8);
+		ellipse(43, 160, 8, 8);
 		fill(color(0, 0 ,0));
-		text("< 4.0 Magnitude", 60, 535);
+		text("< 4.0 Magnitude", 60, 162);
+		
+		//
+		fill(color(0, 0, 0));
+		text("Size - Magnitude", 43, 200);
+		
+		// Shallow
+		fill(color(255, 255, 0));
+		ellipse(43, 230, 15, 15);
+		fill(color(0, 0, 0));
+		text("Shallow", 60, 233);
+		
+		// Intermediate
+		fill(color(0, 0, 255));
+		ellipse(43, 260, 15, 15);
+		fill(color(0, 0, 0));
+		text("Intermediate", 60, 263);
+		
+		// Deep
+		fill(color(255, 0, 0));
+		ellipse(43, 290, 15, 15);
+		fill(color(0, 0, 0));
+		text("Deep", 60, 293);
+		
 	}
 	
 }
