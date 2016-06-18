@@ -191,52 +191,59 @@ public class EarthQuakeMap extends PApplet{
 	private void addLegend() {
 		// Yellow Panel
 		fill(color(255, 255, 200));
-		rect(20, 10, 160, 300);
+		rect(20, 10, 150, 340);
 
 		// Panel Title 
 		fill(color(0, 0 ,0));
-		text("Earthquake Key", 45, 50);
+		text("Earthquake Key", 42, 50);
 
-		// 5.0+
+		// City Marker
 		fill(color(255, 0, 0));
-		ellipse(43, 90, 18, 18);
+		triangle(44, 83, 38, 95, 49, 95);
 		fill(color(0, 0 ,0));
-		text("5.0+ Magnitude", 60, 93);
+		text("City Marker", 60, 93);
 
-		// 4.0+
-		fill(color(255, 255, 0));
-		ellipse(43, 126, 12, 12);
+		// Land quake
+		fill(color(255, 255, 255));
+		ellipse(44, 126, 12, 12);
 		fill(color(0, 0 ,0));
-		text("4.0+ Magnitude", 60, 129);
+		text("Land Quake", 60, 129);
 
-		// < 4.0
-		fill(color(0, 0, 255));
-		ellipse(43, 160, 8, 8);
+		// Ocen Quake
+		fill(color(255, 255, 255));
+		rect(40, 153, 10, 10);
 		fill(color(0, 0 ,0));
-		text("< 4.0 Magnitude", 60, 162);
+		text("Ocen Quake", 60, 162);
 		
 		//
 		fill(color(0, 0, 0));
-		text("Size - Magnitude", 43, 200);
+		text("Size - Magnitude", 40, 200);
 		
 		// Shallow
 		fill(color(255, 255, 0));
-		ellipse(43, 230, 15, 15);
+		ellipse(46, 230, 15, 15);
 		fill(color(0, 0, 0));
-		text("Shallow", 60, 233);
+		text("Shallow", 63, 233);
 		
 		// Intermediate
 		fill(color(0, 0, 255));
-		ellipse(43, 260, 15, 15);
+		ellipse(46, 260, 15, 15);
 		fill(color(0, 0, 0));
-		text("Intermediate", 60, 263);
+		text("Intermediate", 63, 263);
 		
 		// Deep
 		fill(color(255, 0, 0));
-		ellipse(43, 290, 15, 15);
+		ellipse(46, 290, 15, 15);
 		fill(color(0, 0, 0));
-		text("Deep", 60, 293);
+		text("Deep", 63, 293);
 		
+		// Past Hour
+		fill(color(255, 255, 255));
+		ellipse (46, 320, 15, 15);
+		line(36, 310, 56, 330);
+		line(36, 330, 56, 310);
+		fill(color(0, 0, 0));
+		text("Past Hour", 63, 323);
 	}
 	
 }

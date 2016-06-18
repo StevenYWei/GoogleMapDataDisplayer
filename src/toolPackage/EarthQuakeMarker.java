@@ -34,11 +34,11 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 		super(feature.getLocation(), feature.getProperties());
 		float magnitude = Float.parseFloat(feature.getProperty("magnitude").toString());
 		if(magnitude > EARTHQUAKE_SEVERE) {
-			radius = (float) (BASE_RADIUS * 1.7);
+			radius = (float) (BASE_RADIUS * 2);
 		} else if(magnitude < EARTHQUAKE_MEDIUM) {
 			radius = BASE_RADIUS;
 		} else {
-			radius = (float) (BASE_RADIUS * 1.3);
+			radius = (float) (BASE_RADIUS * 1.5);
 		}
 	}
 	
@@ -51,7 +51,7 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 		// Draw marker by calling corresponding overriding method in the subclass
 		drawQuakeMarker(pg, x, y);
 		// If the earthquake happens within 1 hour, draw a cross on the marker
-		if(getProperty("age").toString() == "Past Hour") {
+		if(super.getProperty("age").equals("Past Hour")) {
 			drawCross(pg, x, y);
 		}
 		// Reverse to the original style

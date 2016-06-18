@@ -41,6 +41,7 @@ public class OceanQuakeMarker extends EarthQuakeMarker {
 		pg.fill(0, 0, 0);
 		pg.line(x - radius/2, y - radius/2, x + radius/2, y + radius/2);
 		pg.line(x - radius/2, y + radius/2, x + radius/2, y - radius/2);
+
 	}
 
 }
