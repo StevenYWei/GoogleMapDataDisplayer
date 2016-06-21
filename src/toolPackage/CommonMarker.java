@@ -25,20 +25,25 @@ public abstract class CommonMarker extends SimplePointMarker {
 	}
 	
 	
+	// Set the status of the click
 	public boolean setClicked(boolean state) {
 		clicked = state;
 		return clicked;
 	}
 	
+	// Return the status of the click
 	public boolean getClicked() {
 		return clicked;
 	}
 	
 	public void draw(PGraphics pg, float x, float y) {
 		
+		// If the marker is not being hidden
 		if(!hidden) {
 			pg.pushStyle();
+			// Draw the marker according to the subclass
 			drawMarker(pg, x, y);
+			// If the marker is selected, show the title of the marker according to the subclass
 			if(selected) {
 				showTitle(pg, x, y);
 			}
@@ -48,9 +53,18 @@ public abstract class CommonMarker extends SimplePointMarker {
 	}
 	
 	/**
-	 * Will implement by the subclass
+	 * Common drawMarker method, will draw marker according to specific marker type, will implement by the subclass
+	 * @param pg is the Processing Graphics object
+	 * @param x is the X coordinate of the marker
+	 * @param y is the Y coordinate of the marker
 	 */
 	public abstract void drawMarker(PGraphics pg, float x, float y);
+	/**
+	 * This method will show some information near the marker which mouse is on according to different marker type
+	 * @param pg is the Processing Graphics object
+	 * @param x is the X coordinate of the marker
+	 * @param y is the Y coordinate of the marker
+	 */
 	public abstract void showTitle(PGraphics pg, float x, float y);
 	
 }

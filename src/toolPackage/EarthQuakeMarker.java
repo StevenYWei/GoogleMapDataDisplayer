@@ -7,7 +7,7 @@ import processing.core.PGraphics;
 /**
  * This class defines the abstract marker class for the earthquakes
  * @author Yuming
- *
+ * 06/21/2016
  */
 public abstract class EarthQuakeMarker extends CommonMarker {
 
@@ -43,6 +43,11 @@ public abstract class EarthQuakeMarker extends CommonMarker {
 		}
 	}
 	
+	/*
+	 * Draw earthquake marker according to the quake type
+	 * @see toolPackage.CommonMarker#drawMarker(processing.core.PGraphics, float, float)
+	 */
+	@Override
 	public void drawMarker(PGraphics pg, float x, float y) {
 		
 		// Save original style
@@ -85,11 +90,26 @@ public abstract class EarthQuakeMarker extends CommonMarker {
 		}
 	}
 	
+	/*
+	 * This method shows the title of the earthquake marker
+	 * @see toolPackage.CommonMarker#showTitle(processing.core.PGraphics, float, float)
+	 */
 	@Override
 	public void showTitle(PGraphics pg, float x, float y) {
 		String earthquakeInfo = this.getProperty("title").toString();
 		pg.fill(0,0,0);
 		pg.text(earthquakeInfo, x + 15, y);	
 		pg.line(x + 15,  y + 4, x + 15 + earthquakeInfo.length()*6, y + 4);
+	}
+	
+	/**
+	 * The method returns the impact distance of the earthquake in kilometer
+	 * @return
+	 */
+	public double getImpactDistance() {
+		double impDist = 0;
+		// Equation according to the website online
+		impDist = 1.6 * 2 * 20.0f * Math.pow(1.8, 2*Float.parseFloat(this.getProperty("magnitude").toString())-5);
+		return impDist;
 	}
 }

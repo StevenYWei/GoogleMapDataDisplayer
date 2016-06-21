@@ -34,6 +34,10 @@ public class OceanQuakeMarker extends EarthQuakeMarker {
 
 	}
 
+	/*
+	 * Draw a rectangle on the ocean quake location
+	 * @see toolPackage.EarthQuakeMarker#drawEarthquakeMarker(processing.core.PGraphics, float, float)
+	 */
 	@Override
 	public void drawEarthquakeMarker(PGraphics pg, float x, float y) {
 		pg.rect(x - radius/2, y - radius/2, radius, radius);

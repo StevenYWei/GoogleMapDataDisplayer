@@ -10,6 +10,7 @@ import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.GeoJSONReader;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.marker.AbstractMarker;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
@@ -77,8 +78,10 @@ public class EarthQuakeMap extends PApplet{
 		// Add legend to the map.
 		addLegend();
 		
-		if(lastSelected != null) {
-			lastSelected.draw(map);
+		// If clicked on a earthquake marker and there are city inside the impact circle, 
+		// then draw a line between the city and the earthquake marker
+		if(lastClicked != null) {
+			drawLineQuakeToCity();
 		}
 	}
 	
@@ -88,7 +91,20 @@ public class EarthQuakeMap extends PApplet{
 	 */
 	@Override
 	public void mouseClicked() {
-		
+		if(lastClicked != null) {
+			lastClicked.setClicked(false);
+			lastClicked = null;
+			unhideAllMarkers();
+		} else {
+			// Find out which earthquake marker is clicked
+			EarthQuakeMarker quake = selectEarthquakeMarkers(earthquakeMarkers);
+			if(quake != null) {
+				// Hide all the earthquake markers except the clicked one.
+				hideEarthquakeMarkers(earthquakeMarkers, quake);
+				// Hide all the city markers except the cities in the impact circle
+				hideCityMarkers(cityMarkers);
+		}
+		}
 	}
 	
 	/*
@@ -102,6 +118,7 @@ public class EarthQuakeMap extends PApplet{
 			lastSelected.setSelected(false);
 			lastSelected = null;
 		}
+		// Check whether the mouse is on one of the earthquake markers or city markers
 		selectMarkerHovering(earthquakeMarkers);
 		selectMarkerHovering(cityMarkers);
 		
@@ -116,12 +133,85 @@ public class EarthQuakeMap extends PApplet{
 	public void selectMarkerHovering(List<Marker> markers) {
 		for(Marker marker : markers) {
 			if(marker.isInside(map, mouseX, mouseY)) {
+				// If the mouse is inside the marker region, then set it to selected
 				lastSelected = (CommonMarker) marker;
 				lastSelected.setSelected(true);
 				return;
 			}
 		}
 	}
+	
+	/**
+	 * This method find out which earthquake is being clicked
+	 * @param earthquakeMarkers contains all the earthquakes information parsed from the link
+	 * @return An EarthQuakeMarker type marker
+	 */
+	public EarthQuakeMarker selectEarthquakeMarkers(List<Marker> earthquakeMarkers) {
+		for(Marker earthquakeMarker : earthquakeMarkers) {
+			if(earthquakeMarker.isInside(map, mouseX, mouseY)) {
+				// If the mouse is inside the marker region, then return it
+				return (EarthQuakeMarker) earthquakeMarker;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * This method hide all the earthquake markers except the clicked earthquake marker
+	 * @param earthquakeMarkers contains all the earthquakes information parsed from the link
+	 * @param quake is the earthquake marker being clicked
+	 */
+	public void hideEarthquakeMarkers(List<Marker> earthquakeMarkers, EarthQuakeMarker quake) {
+		for(Marker earthquakeMarker : earthquakeMarkers) {
+			if(earthquakeMarker.equals(quake)) {
+				earthquakeMarker.setHidden(false);
+				lastClicked = (CommonMarker) earthquakeMarker;
+			} else {
+				earthquakeMarker.setHidden(true);
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param cityMarkers contains all the city information parsed from the file
+	 */
+	public void hideCityMarkers(List<Marker> cityMarkers) {
+		for(Marker cityMarker : cityMarkers) {
+			if(lastClicked != null) {
+				// Check the distance between the city and the earthquake to see whether the city is in the impact circle
+				if(cityMarker.getDistanceTo(lastClicked.getLocation()) < ((EarthQuakeMarker) lastClicked).getImpactDistance()) {
+					cityMarker.setHidden(false);
+				} else {
+					cityMarker.setHidden(true);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Show all the earthquake and city markers
+	 */
+	public void unhideAllMarkers() {
+		for(Marker marker : earthquakeMarkers) {
+			marker.setHidden(false);
+		}
+		for(Marker marker : cityMarkers) {
+			marker.setHidden(false);
+		}
+	}
+	
+	/**
+	 * If the city is inside the impact circle, draw a line between the city and the earthquake
+	 */
+	public void drawLineQuakeToCity() {
+		for(Marker cityMarker : cityMarkers) {
+			if(cityMarker.getDistanceTo(lastClicked.getLocation()) < ((EarthQuakeMarker)lastClicked).getImpactDistance()) {
+				line(((AbstractMarker)cityMarker).getScreenPosition(map).x, ((AbstractMarker)cityMarker).getScreenPosition(map).y, lastClicked.getScreenPosition(map).x, lastClicked.getScreenPosition(map).y);
+			}
+		}
+		}
+		
 	
 	/**
 	 * This function creates the earthquake markers according to the earthquake features and 
@@ -161,19 +251,25 @@ public class EarthQuakeMap extends PApplet{
 		
 		Location loc = feature.getLocation();
 		for(Marker marker : countryMarkers) {
+			// Check if the country marker is a multimarker
 			if(marker.getClass() == MultiMarker.class) {
 				for(Marker subMultiMarker : ((MultiMarker) marker).getMarkers()) {
+					// In the multimarker, check whether the location is inside
 					if(((AbstractShapeMarker) subMultiMarker).isInsideByLocation(loc)) {
+						// If is inside the country, then and the country name to the pointfeature
 						feature.addProperty("country", marker.getProperty("name"));
 						if(marker.getProperty("earthquakeCount") == null) {
+							// If there is no earthquakeCount property in the country marker, set it to 1 since here we found one earthquake in the country
 							marker.setProperty("earthquakeCount", (int) 1);
 						} else {
+							// If there is earthquakeCount property, then increase the number
 							marker.setProperty("earthquakeCount", (int) marker.getProperty("earthquakeCount") + 1);
 						}
 						return true;
 					}
 				}
 			} else {
+				// If the country marker is not a multimarker, then check the location to see if it's inside the country
 				if(((AbstractShapeMarker) marker).isInsideByLocation(loc)) {
 					feature.addProperty("country", marker.getProperty("name"));
 					if(marker.getProperty("earthquakeCount") == null) {

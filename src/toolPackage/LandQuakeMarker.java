@@ -34,6 +34,10 @@ public class LandQuakeMarker extends EarthQuakeMarker {
 		pg.line(x - radius/2, y + radius/2, x + radius/2, y - radius/2);
 	}
 
+	/*
+	 * Draw a ellipse on the land quake location
+	 * @see toolPackage.EarthQuakeMarker#drawEarthquakeMarker(processing.core.PGraphics, float, float)
+	 */
 	@Override
 	public void drawEarthquakeMarker(PGraphics pg, float x, float y) {
 		pg.ellipse(x, y, radius, radius);

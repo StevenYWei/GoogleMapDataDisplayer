@@ -27,7 +27,10 @@ public class CityMarker extends CommonMarker {
 		super(feature);
 	}
 	
-
+	/*
+	 * Draw triangle for the city marker
+	 * @see toolPackage.CommonMarker#drawMarker(processing.core.PGraphics, float, float)
+	 */
 	@Override
 	public void drawMarker(PGraphics pg, float x, float y) {
 		// Save previous drawing style
@@ -41,6 +44,10 @@ public class CityMarker extends CommonMarker {
 		pg.popStyle();
 	}
 
+	/*
+	 * Implement the showTitle method, show name + country + population of the city marker
+	 * @see toolPackage.CommonMarker#showTitle(processing.core.PGraphics, float, float)
+	 */
 	@Override
 	public void showTitle(PGraphics pg, float x, float y) {
 		if(this.isSelected()) {
