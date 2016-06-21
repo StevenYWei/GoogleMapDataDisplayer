@@ -10,7 +10,7 @@ import processing.core.PGraphics;
  * 06/21/2016
  */
 public abstract class EarthQuakeMarker extends CommonMarker {
-
+	
 	public static final float EARTHQUAKE_SEVERE = 5;
 	public static final float EARTHQUAKE_MEDIUM = 4;
 	public static final float BASE_RADIUS = 10;

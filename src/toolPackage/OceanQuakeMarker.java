@@ -4,6 +4,11 @@ import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
 import processing.core.PGraphics;
 
+/**
+ * This class defines the quakes occur in the ocean
+ * @author Yuming
+ * 06/21/2016
+ */
 public class OceanQuakeMarker extends EarthQuakeMarker {
 
 	/**
@@ -42,5 +47,4 @@ public class OceanQuakeMarker extends EarthQuakeMarker {
 	public void drawEarthquakeMarker(PGraphics pg, float x, float y) {
 		pg.rect(x - radius/2, y - radius/2, radius, radius);
 	}
-
 }

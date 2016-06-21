@@ -5,6 +5,11 @@ import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import processing.core.PGraphics;
 
+/**
+ * This class is a common marker class that define some common feature of the marker
+ * @author Yuming
+ * 06/21/2016
+ */
 public abstract class CommonMarker extends SimplePointMarker {
 
 	protected boolean clicked = false;

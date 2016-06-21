@@ -26,7 +26,6 @@ public class LifeExpectancyMap extends PApplet {
 	private static final long serialVersionUID = 1L;
 	private UnfoldingMap myMap;
 	private GoogleMapProvider mapProvider;
-//	private int zoomLvl = 16;
 	private HashMap<String, Float> lifeExptCountry;
 	private List<Feature> countries;
 	private List<Marker> countryMarkers;

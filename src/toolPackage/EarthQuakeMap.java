@@ -21,6 +21,11 @@ import parsing.ParseFeed;
 //Processing library
 import processing.core.PApplet;
 
+/**
+ * This class builds a Google Map that shows earthquake and city data
+ * @author Yuming
+ * 06/21/2016
+ */
 public class EarthQuakeMap extends PApplet{
 
 	private static final long serialVersionUID = 6090104746129831548L;

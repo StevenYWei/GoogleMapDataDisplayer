@@ -4,6 +4,11 @@ import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
 import processing.core.PGraphics;
 
+/**
+ * This class defines the quakes occur on land
+ * @author Yuming
+ * 06/21/2016
+ */
 public class LandQuakeMarker extends EarthQuakeMarker {
 	
 	/**
@@ -21,7 +26,6 @@ public class LandQuakeMarker extends EarthQuakeMarker {
 	public LandQuakeMarker(PointFeature feature) {
 		super(feature);
 	}
-
 
 	/*
 	 * Draw a cross on the ellipse

@@ -7,7 +7,7 @@ import processing.core.PGraphics;
 /**
  * This class define the marker of the city, shape and size etc.
  * @author Yuming
- * 
+ * 06/21/2016
  */
 public class CityMarker extends CommonMarker {
 	
