@@ -1,34 +1,28 @@
 package toolPackage;
 
-//Processing library
-import processing.core.PApplet;
-
 //Java utilities libraries
 import java.util.ArrayList;
 import java.util.List;
 
 //Unfolding libraries
 import de.fhpotsdam.unfolding.UnfoldingMap;
-import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
-import de.fhpotsdam.unfolding.marker.Marker;
-import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.data.Feature;
-import de.fhpotsdam.unfolding.data.GeoDataReader;
 import de.fhpotsdam.unfolding.data.GeoJSONReader;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
-import de.fhpotsdam.unfolding.marker.SimplePointMarker;
+import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
+import de.fhpotsdam.unfolding.marker.Marker;
+import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.utils.MapUtils;
-
 //Parsing library
 import parsing.ParseFeed;
+//Processing library
+import processing.core.PApplet;
 
 public class EarthQuakeMap extends PApplet{
 
 	private static final long serialVersionUID = 6090104746129831548L;
-	private final static float EARTHQUAKE_SEVERE = 5;
-	private final static float EARTHQUAKE_MEDIUM = 4;
 	
 	private UnfoldingMap map;
 	private final static String earthQuakeURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
@@ -40,6 +34,8 @@ public class EarthQuakeMap extends PApplet{
 	private List<Feature> cityFeature;
 	private String cityDataFile = "city-data.json";
 	private String countryDataFile = "countries.geo.json";
+	private CommonMarker lastSelected;
+	private CommonMarker lastClicked;
 	
 	public void setup() {
 		// Set the size of the windows
@@ -80,6 +76,51 @@ public class EarthQuakeMap extends PApplet{
 		map.draw();
 		// Add legend to the map.
 		addLegend();
+		
+		if(lastSelected != null) {
+			lastSelected.draw(map);
+		}
+	}
+	
+	/*
+	 * This method hides all other markers except the selected quake marker and the impacted city
+	 * @see processing.core.PApplet#mouseClicked()
+	 */
+	@Override
+	public void mouseClicked() {
+		
+	}
+	
+	/*
+	 * This method shows the tile when the mouse moves on a marker
+	 * @see processing.core.PApplet#mouseMoved()
+	 */
+	@Override
+	public void mouseMoved() {
+		
+		if(lastSelected != null) {
+			lastSelected.setSelected(false);
+			lastSelected = null;
+		}
+		selectMarkerHovering(earthquakeMarkers);
+		selectMarkerHovering(cityMarkers);
+		
+	}
+	
+	/**
+	 * This function helps to determine whether the mouse within one of the marker area, if yes,
+	 * show the title of the marker.
+	 * @param mouseX is the X coordinate of the mouse
+	 * @param mouseY is the Y coordinate of the mouse
+	 */
+	public void selectMarkerHovering(List<Marker> markers) {
+		for(Marker marker : markers) {
+			if(marker.isInside(map, mouseX, mouseY)) {
+				lastSelected = (CommonMarker) marker;
+				lastSelected.setSelected(true);
+				return;
+			}
+		}
 	}
 	
 	/**
@@ -97,45 +138,6 @@ public class EarthQuakeMap extends PApplet{
 				earthquakeMarkers.add(new OceanQuakeMarker(feature));
 			}
 		}
-	}
-	/**
-	 * This function use the location information from point feature to create simple point markers for each location
-	 * @param quakeFeature is a list with data type PointFeature, which contains information of the earthquake 
-	 * location, such as latitude and longitude, magnitude and title etc.
-	 * @return the marker is return as an arraylist
-	 */
-	private ArrayList<Marker> createMarker(List<PointFeature> quakeFeature) {
-		
-		// Arraylist to store markers
-		ArrayList<Marker> markerList = new ArrayList<Marker>();
-		Location loc;
-		SimplePointMarker marker;
-		// The magnitude of the earthquake in float number
-		float earthquakeMagnitude;
-		for(PointFeature feature : quakeFeature) {
-			loc = feature.getLocation();
-			if(loc != null) {
-				// Create SimplePointMarker for the location with the properties
-				marker = new SimplePointMarker(loc, feature.getProperties());
-				earthquakeMagnitude = Float.parseFloat(marker.getProperty("magnitude").toString());
-				// Classify the earthquake into three categories and set different marker sizes and colors according to category
-				if(earthquakeMagnitude > EARTHQUAKE_SEVERE) {
-					// Color red
-					marker.setColor(color(255, 0, 0));
-					marker.setRadius(18);
-				} else if(earthquakeMagnitude < EARTHQUAKE_MEDIUM) {
-					// Color blue
-					marker.setColor(color(0, 0, 255));
-					marker.setRadius(8);
-				} else {
-					// Color yellow
-					marker.setColor(color(255, 255, 0));
-					marker.setRadius(12);
-				}
-				markerList.add(marker);
-			}
-		}
-		return markerList;
 	}
 	
 	/**
@@ -185,6 +187,7 @@ public class EarthQuakeMap extends PApplet{
 		}
 		return false;
 	}
+	
 	/**
 	 * This function draws a panel contains the legends of the markers.
 	 */

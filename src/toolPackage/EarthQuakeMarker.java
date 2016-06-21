@@ -2,7 +2,6 @@ package toolPackage;
 
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
-import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import processing.core.PGraphics;
 
 /**
@@ -10,13 +9,15 @@ import processing.core.PGraphics;
  * @author Yuming
  *
  */
-public abstract class EarthQuakeMarker extends SimplePointMarker {
+public abstract class EarthQuakeMarker extends CommonMarker {
 
 	public static final float EARTHQUAKE_SEVERE = 5;
 	public static final float EARTHQUAKE_MEDIUM = 4;
 	public static final float BASE_RADIUS = 10;
 	public static final float EARTHQUAKE_SHALLOW = 70;
 	public static final float EARTHQUAKE_DEEP = 300;
+	
+	public abstract void drawEarthquakeMarker(PGraphics pg, float x, float y);
 	
 	/**
 	 * Constructor with location information as parameter
@@ -31,7 +32,7 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 	 * @param feature contains information of the earthquake, depth, magnitude and title etc.
 	 */
 	public EarthQuakeMarker(PointFeature feature) {
-		super(feature.getLocation(), feature.getProperties());
+		super(feature);
 		float magnitude = Float.parseFloat(feature.getProperty("magnitude").toString());
 		if(magnitude > EARTHQUAKE_SEVERE) {
 			radius = (float) (BASE_RADIUS * 2);
@@ -42,29 +43,23 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 		}
 	}
 	
-	public void draw(PGraphics pg, float x, float y) {
+	public void drawMarker(PGraphics pg, float x, float y) {
 		
 		// Save original style
 		pg.pushStyle();
 		// Determine the color
 		determineColor(pg);
-		// Draw marker by calling corresponding overriding method in the subclass
-		drawQuakeMarker(pg, x, y);
+		//Draw quake marker based on subclass type implementation
+		drawEarthquakeMarker(pg, x, y);
+		
 		// If the earthquake happens within 1 hour, draw a cross on the marker
 		if(super.getProperty("age").equals("Past Hour")) {
 			drawCross(pg, x, y);
 		}
+		
 		// Reverse to the original style
 		pg.popStyle();	
 	}
-	
-	/**
-	 * Draw different shapes of marker on the earthquake location
-	 * @param pg is processing graph object
-	 * @param x is earthquake x location on the graph
-	 * @param y is earthquake y location on the graph
-	 */
-	public abstract void drawQuakeMarker(PGraphics pg, float x, float y);
 	
 	/**
 	 * Draw cross on the marker
@@ -89,5 +84,12 @@ public abstract class EarthQuakeMarker extends SimplePointMarker {
 			pg.fill(0, 0, 255);
 		}
 	}
-
+	
+	@Override
+	public void showTitle(PGraphics pg, float x, float y) {
+		String earthquakeInfo = this.getProperty("title").toString();
+		pg.fill(0,0,0);
+		pg.text(earthquakeInfo, x + 15, y);	
+		pg.line(x + 15,  y + 4, x + 15 + earthquakeInfo.length()*6, y + 4);
+	}
 }

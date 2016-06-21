@@ -22,14 +22,6 @@ public class LandQuakeMarker extends EarthQuakeMarker {
 		super(feature);
 	}
 
-	/*
-	 * Draw a circle on the location
-	 * @see toolPackage.EarthQuakeMarker#drawQuakeMarker(processing.core.PGraphics, float, float)
-	 */
-	@Override
-	public void drawQuakeMarker(PGraphics pg, float x, float y) {
-		pg.ellipse(x, y, radius, radius);
-	}
 
 	/*
 	 * Draw a cross on the ellipse
@@ -42,4 +34,8 @@ public class LandQuakeMarker extends EarthQuakeMarker {
 		pg.line(x - radius/2, y + radius/2, x + radius/2, y - radius/2);
 	}
 
+	@Override
+	public void drawEarthquakeMarker(PGraphics pg, float x, float y) {
+		pg.ellipse(x, y, radius, radius);
+	}
 }

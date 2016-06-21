@@ -21,16 +21,6 @@ public class OceanQuakeMarker extends EarthQuakeMarker {
 	public OceanQuakeMarker(PointFeature feature) {
 		super(feature);
 	}
-	
-	/*
-	 * Draw a rectangle on the location
-	 * @see toolPackage.EarthQuakeMarker#drawQuakeMarker(processing.core.PGraphics, float, float)
-	 */
-	@Override
-	public void drawQuakeMarker(PGraphics pg, float x, float y) {
-
-		pg.rect(x - radius/2, y - radius/2, radius, radius);
-	}
 
 	/*
 	 * Draw a cross on the rectangle
@@ -42,6 +32,11 @@ public class OceanQuakeMarker extends EarthQuakeMarker {
 		pg.line(x - radius/2, y - radius/2, x + radius/2, y + radius/2);
 		pg.line(x - radius/2, y + radius/2, x + radius/2, y - radius/2);
 
+	}
+
+	@Override
+	public void drawEarthquakeMarker(PGraphics pg, float x, float y) {
+		pg.rect(x - radius/2, y - radius/2, radius, radius);
 	}
 
 }
