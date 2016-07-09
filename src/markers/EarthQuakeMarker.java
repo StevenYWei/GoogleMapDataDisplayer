@@ -7,9 +7,9 @@ import processing.core.PGraphics;
 /**
  * This class defines the abstract marker class for the earthquakes
  * @author Yuming
- * 06/21/2016
+ * 07/08/2016
  */
-public abstract class EarthQuakeMarker extends CommonMarker {
+public abstract class EarthQuakeMarker extends CommonMarker implements Comparable<EarthQuakeMarker> {
 	
 	public static final float EARTHQUAKE_SEVERE = 5;
 	public static final float EARTHQUAKE_MEDIUM = 4;
@@ -111,5 +111,12 @@ public abstract class EarthQuakeMarker extends CommonMarker {
 		// Equation according to the website online
 		impDist = 1.6 * 2 * 20.0f * Math.pow(1.8, 2*Float.parseFloat(this.getProperty("magnitude").toString())-5);
 		return impDist;
+	}
+	
+	/**
+	 * This method is call when want to print out the information of the earthquake.
+	 */
+	public String toString() {
+		return this.getStringProperty("title");
 	}
 }

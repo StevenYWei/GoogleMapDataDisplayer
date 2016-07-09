@@ -2,6 +2,7 @@ package mapView;
 
 //Java utilities libraries
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 //Unfolding libraries
@@ -29,7 +30,7 @@ import processing.core.PApplet;
 /**
  * This class builds a Google Map that shows earthquake and city data
  * @author Yuming
- * 06/21/2016
+ * 07/08/2016
  */
 public class EarthQuakeMap extends PApplet{
 
@@ -79,6 +80,9 @@ public class EarthQuakeMap extends PApplet{
 		// Add markers to the map
 		map.addMarkers(earthquakeMarkers);
 		map.addMarkers(cityMarkers);
+		
+		//
+		sortAndPrint(10);
 	}
 	
 	public void draw() {
@@ -95,6 +99,18 @@ public class EarthQuakeMap extends PApplet{
 		}
 	}
 	
+	/**
+	 * This method print out the top numOfRecordToPrint record in descendant order.
+	 * @param numOfRecordToPrint is the record number to print out
+	 */
+	public void sortAndPrint(int numOfRecordToPrint) {
+		Object[] quakeArray = earthquakeMarkers.toArray();
+		Arrays.sort(quakeArray);
+		
+		for(int i = 0; i < numOfRecordToPrint; i++) {
+			System.out.println(quakeArray[i]);
+		}
+	}
 	/*
 	 * This method hides all other markers except the selected quake marker and the impacted city
 	 * @see processing.core.PApplet#mouseClicked()

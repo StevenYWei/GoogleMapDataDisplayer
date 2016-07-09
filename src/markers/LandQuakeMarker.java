@@ -46,4 +46,20 @@ public class LandQuakeMarker extends EarthQuakeMarker {
 	public void drawEarthquakeMarker(PGraphics pg, float x, float y) {
 		pg.ellipse(x, y, radius, radius);
 	}
+
+	/*
+	 * This method compare the magnitude of the earthquake maker and output the reverse result
+	 * If the magnitude of this earthquake is larger than the feed-in earthquake, than output -1, when 
+	 * using Java input built-in sort, will sort in descendant order
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(EarthQuakeMarker o) {
+		if(Float.parseFloat(this.getProperty("magnitude").toString()) > Float.parseFloat(o.getProperty("magnitude").toString())) {
+			return -1;
+		} else if(Float.parseFloat(this.getProperty("magnitude").toString()) < Float.parseFloat(o.getProperty("magnitude").toString())) {
+			return 1;
+		}
+		return 0;
+	}
 }
