@@ -96,6 +96,7 @@ public class EarthQuakeMap extends PApplet{
 		// then draw a line between the city and the earthquake marker
 		if(lastClicked != null) {
 			drawLineQuakeToCity();
+			drawImpactCircle();
 		}
 	}
 	
@@ -236,8 +237,20 @@ public class EarthQuakeMap extends PApplet{
 				line(((AbstractMarker)cityMarker).getScreenPosition(map).x, ((AbstractMarker)cityMarker).getScreenPosition(map).y, lastClicked.getScreenPosition(map).x, lastClicked.getScreenPosition(map).y);
 			}
 		}
-		}
-		
+	}
+	
+	/**
+	 * Draw a circle whose center is the location of the earthquake marker. To be fixed.
+	 */
+	public void drawImpactCircle() {
+		float xLoc, yLoc, impactDist;
+		xLoc = lastClicked.getScreenPosition(map).x;
+		yLoc = lastClicked.getScreenPosition(map).y;
+		impactDist = Float.parseFloat(((EarthQuakeMarker)lastClicked).getProperty("magnitude").toString()) * 15;
+		noFill();
+		ellipse(xLoc, yLoc, impactDist, impactDist);
+	}
+	
 	
 	/**
 	 * This function creates the earthquake markers according to the earthquake features and 
