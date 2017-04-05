@@ -10,8 +10,8 @@ import de.fhpotsdam.unfolding.utils.MapUtils;
 import de.fhpotsdam.unfolding.providers.Google.*;
 import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.GeoJSONReader;
-//import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.Marker;
+//import de.fhpotsdam.unfolding.geo.Location;
 
 /**
  * This class draw a map showing the different life expectancy among countries in the world with different color.
